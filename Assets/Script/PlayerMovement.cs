@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public float wallrunSpeed;
+    public float climbSpeed;
+    public float airMinSpeed;
 
     public float groundDrag;
 
@@ -27,12 +29,15 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    public bool grounded;
 
     [Header("Slope Handing")]
     public float maxSlopAngle;
     public RaycastHit slopHit;
     private bool exitingSlope;
+
+    [Header("References")]
+    public Climbing climbingScript;
 
     public Transform orientation;
 
@@ -47,14 +52,24 @@ public class PlayerMovement : MonoBehaviour
 
     public enum MovementState
     {
+        freeze,
+        unlimited,
         walking,
         sprinting,
         wallrunning,
+        climbing,
         air
     }
 
     
     public bool wallrunning;
+    public bool climbing;
+    public bool freeze;
+    public bool unlimited;
+
+    public bool restricted;
+
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -101,16 +116,40 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
+    bool keepMomentum;
     private void StateHandler()
     {
-        if (wallrunning)
+        // Mode - Freeze
+        if (freeze)
+        {
+            state = MovementState.freeze;
+            rb.velocity = Vector3.zero;
+            desiredMoveSpeed = 0f;
+        }
+
+        // Mode - Unlimited
+        else if (unlimited)
+        {
+            state = MovementState.unlimited;
+            desiredMoveSpeed = 999f;
+            return;
+        }
+
+        // Mode - Climibng
+        else if (climbing)
+        {
+            state = MovementState.climbing;
+            desiredMoveSpeed = climbSpeed;
+        }
+
+        else if (wallrunning)
         {
             state = MovementState.wallrunning;
             desiredMoveSpeed = wallrunSpeed;
         }
         
         // Mode - Sprinting
-        if(grounded && Input.GetKey(sprintKey))
+        else if(grounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprinting;
             moveSpeed = sprintSpeed;
@@ -131,6 +170,10 @@ public class PlayerMovement : MonoBehaviour
     }
     private void MovePlayer()
     {
+        if (restricted) return;
+
+        if (climbingScript.exitingwall) return;
+
         //calculate movement direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
@@ -144,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // on ground
-        if(grounded)
+        else if(grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
         // in air
