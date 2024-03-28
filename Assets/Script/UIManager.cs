@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class UIManager : MonoBehaviour
 
     public GameObject PauseMenu;
 
+    
+
+    public GameObject PreQuit;
+
     public KeyCode pauseMenu = KeyCode.P;
 
     private void Awake()
@@ -20,6 +25,8 @@ public class UIManager : MonoBehaviour
         //when the game starts, the game over screen isn't visible
         GameOverScreen.SetActive(false);
         PauseMenu.SetActive(false);
+        PreQuit.SetActive(false);
+        
     }
 
     // Update is called once per frame
@@ -67,6 +74,27 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene (sceneID);
     }
 
+    public void PreQiutUI()
+    {
+        PreQuit.SetActive(true);
+    }
+
+    public void OffPreQuit()
+    {
+        PreQuit.SetActive (false);
+    }
+
+    public void QuitGame()
+    {
+        SceneManager.LoadScene("MainUI");
+        PauseMenu.SetActive(false);
+        Time.timeScale = 1f;
+       
+    }
+
+    
+
+    
 
 
 }//end
