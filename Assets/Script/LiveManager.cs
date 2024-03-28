@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using Unity.UI;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class LiveManager : MonoBehaviour
@@ -10,8 +10,8 @@ public class LiveManager : MonoBehaviour
     public static float playerLives = 5;
 
     public GameObject GameWin;
-    public GameObject PreQuit;
-    public GameObject MenuQ;
+    public GameObject QuitWin;
+    public GameObject QuitFn;
 
     private PlayerMovement pm;
     private Rigidbody rb;
@@ -21,8 +21,9 @@ public class LiveManager : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pm = GetComponent<PlayerMovement>();
         GameWin.SetActive(false);
-        PreQuit.SetActive(false);
-        MenuQ.SetActive(false);
+        QuitWin.SetActive(false);
+        QuitFn.SetActive(false);
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -40,7 +41,7 @@ public class LiveManager : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                //Destroy(gameObject);
+                
                 Time.timeScale = 0;
             }
         }
@@ -51,27 +52,29 @@ public class LiveManager : MonoBehaviour
             //win
             GameWin.SetActive(true);
             Time.timeScale = 0f;
-            MenuQ.SetActive(true);
+            QuitWin.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
         
     }
-
-    public void PreQuitUI()//click
+    
+    public void FinishGame()//yes
     {
-        PreQuit.SetActive(true);
-    }
-
-    public void OffPreQuit()//no
-    {
-        PreQuit.SetActive(false);
-    }
-
-    public void QuitFn()//yes
-    {
+        GameWin.SetActive(false);
+        QuitWin.SetActive(false);
+        QuitFn.SetActive(false);
         SceneManager.LoadScene("MainUI");
-        Time.timeScale = 1f;
+    }
+    
+    public void PreQuit()
+    {
+        QuitFn.SetActive(true);
+    }
+    
+    public void OffQuitMenu()
+    {
+        QuitFn.SetActive(false) ;
     }
 
 }//end

@@ -14,8 +14,7 @@ public class UIManager : MonoBehaviour
 
     public GameObject PauseMenu;
 
-    
-
+    public GameObject QuitButton;
     public GameObject PreQuit;
 
     public KeyCode pauseMenu = KeyCode.P;
@@ -26,7 +25,7 @@ public class UIManager : MonoBehaviour
         GameOverScreen.SetActive(false);
         PauseMenu.SetActive(false);
         PreQuit.SetActive(false);
-        
+        QuitButton.SetActive(false);
     }
 
     // Update is called once per frame
@@ -35,15 +34,18 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyUp(pauseMenu)&& LiveManager.playerLives !=0)
         {
             PauseMenu.SetActive(true);
+            QuitButton.SetActive(true);
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
         }
         livesText.text = LiveManager.playerLives.ToString("Lives: " + LiveManager.playerLives);
 
         if (LiveManager.playerLives == 0)
         {
             GameOverScreen.SetActive (true);
+            QuitButton.SetActive (true);
         }
         
     }
@@ -63,6 +65,7 @@ public class UIManager : MonoBehaviour
     public void Resume()
     {
         PauseMenu.SetActive (false);
+        QuitButton.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -86,8 +89,16 @@ public class UIManager : MonoBehaviour
 
     public void QuitGame()
     {
-        SceneManager.LoadScene("MainUI");
+        PreQuit.SetActive(false);
+
+        QuitButton.SetActive(false);
+
+        GameOverScreen.SetActive(false);
+
         PauseMenu.SetActive(false);
+
+        SceneManager.LoadScene("MainUI");
+
         Time.timeScale = 1f;
        
     }
