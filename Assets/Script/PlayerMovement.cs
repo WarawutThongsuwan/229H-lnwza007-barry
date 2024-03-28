@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
 
     public float groundDrag;
 
+    public KeyCode pauseMenu = KeyCode.P;
+
     [Header("Jumping")]
     public float jumpForce;
     public float jumpCooldown;
@@ -254,6 +256,7 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDirection, slopHit.normal).normalized;
     }
 
+    
 
 
 
